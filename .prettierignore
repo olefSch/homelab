@@ -1,0 +1,11 @@
+# Ignore Terraform internals
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Ignore git internals
+.git/
+
+# Ignore build artifacts
+*.img
+*.iso
