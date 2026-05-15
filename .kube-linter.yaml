@@ -1,0 +1,8 @@
+checks:
+  doNotAutoAddDefaults: false
+  exclude:
+    - run-as-non-root
+    - no-read-only-root-fs
+    - ptrace-privileged
+  include:
+    - unset-cpu-requirements
