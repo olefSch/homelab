@@ -1,8 +1,9 @@
 checks:
+  # docs to look through defaults and optional checks: https://docs.kubelinter.io/#/generated/checks
   doNotAutoAddDefaults: false
-  exclude:
-    - run-as-non-root
-    - no-read-only-root-fs
-    - ptrace-privileged
+  exclude: []
   include:
-    - unset-cpu-requirements
+    - no-liveness-probe
+    - no-readiness-probe
+    - dangling-ingress
+    - use-namespace
