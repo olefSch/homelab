@@ -1,0 +1,15 @@
+name: 'Setup Terraform & TFLint'
+description: 'Installs Terraform and TFLint for use in workflows'
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: '1.15.4'
+        terraform_wrapper: false
+
+    - name: Setup TFLint
+      uses: terraform-linters/setup-tflint@v4
+      with:
+        tflint_version: 'v0.62.1'
