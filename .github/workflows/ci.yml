@@ -83,3 +83,53 @@ jobs:
       - name: Run TFLint
         run: tflint --recursive
         working-directory: ./terraform
+
+  validate-manifests:
+    name: Lint and Validate Kubernetes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Kubernetes Tools
+        uses: ./.github/actions/setup-k8s-tooling
+
+      - name: Lint and Render Local Helm Charts
+        run: |
+          mkdir -p rendered-charts
+
+          if [ -d "kubernetes/charts" ]; then
+            CHARTS=$(find kubernetes/charts -type f -name 'Chart.yaml' -exec dirname {} \;)
+            for chart in $CHARTS; do
+              echo "=== Processing Local Chart: $chart ==="
+
+              helm lint "$chart" --strict
+
+              chart_name=$(basename "$chart")
+              helm template "$chart_name" "$chart" --include-crds > "rendered-charts/${chart_name}.yaml"
+            done
+          else
+            echo "No kubernetes/charts directory found. Skipping."
+          fi
+
+      - name: Kubeconform Schema Validation
+        run: |
+          kubeconform -strict -summary \
+            -schema-location default \
+            -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \
+            -ignore-missing-schemas \
+            -ignore-filename-pattern 'values.yaml' \
+            kubernetes/root-app.yaml \
+            kubernetes/argocd-apps/ \
+            kubernetes/k3s-manifests/ \
+            rendered-charts/
+
+      - name: Kube-Linter Policy Validation
+        run: |
+          echo "=== Linting Raw Manifests ==="
+          kube-linter lint kubernetes/root-app.yaml kubernetes/argocd-apps/ kubernetes/k3s-manifests/ --config .kube-linter.yaml
+
+          echo "=== Linting Rendered Local Charts ==="
+          if [ -d "rendered-charts" ] && [ "$(ls -A rendered-charts)" ]; then
+            kube-linter lint rendered-charts/ --config .kube-linter.yaml
+          fi

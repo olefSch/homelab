@@ -1,0 +1,44 @@
+name: 'Setup K8s Validation Tools'
+description: 'Installs Helm, Kubeconform, and Kube-linter with caching'
+
+inputs:
+  helm-version:
+    description: 'Version of Helm to install'
+    default: 'v4.2.0'
+  kubeconform-version:
+    description: 'Version of Kubeconform to install'
+    default: 'v0.7.0'
+  kube-linter-version:
+    description: 'Version of Kube-linter to install'
+    default: '0.8.3'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Helm
+      uses: azure/setup-helm@v4
+      with:
+        version: ${{ inputs.helm-version }}
+
+    - name: Cache K8s Tools
+      id: cache-tools
+      uses: actions/cache@v4
+      with:
+        path: ~/.k8s-tools
+        key: k8s-tools-${{ inputs.kubeconform-version }}-${{ inputs.kube-linter-version }}
+
+    - name: Install Tools (if not cached)
+      if: steps.cache-tools.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        mkdir -p ~/.k8s-tools
+
+        curl -sL "https://github.com/yannh/kubeconform/releases/download/${{ inputs.kubeconform-version }}/kubeconform-linux-amd64.tar.gz" | tar -xz
+        mv kubeconform ~/.k8s-tools/
+
+        curl -sL "https://github.com/stackrox/kube-linter/releases/download/v${{ inputs.kube-linter-version }}/kube-linter-linux.tar.gz" | tar -xz
+        mv kube-linter ~/.k8s-tools/
+
+    - name: Add Tools to PATH
+      shell: bash
+      run: echo "$HOME/.k8s-tools" >> $GITHUB_PATH
