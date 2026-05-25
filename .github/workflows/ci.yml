@@ -8,6 +8,9 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   PRETTIER_VERSION: '3.8.3'
 
+permissions:
+  contents: read
+
 jobs:
   code-hygiene:
     name: Format & Lint
@@ -28,36 +31,11 @@ jobs:
         run: npx prettier@${{ env.PRETTIER_VERSION }} --check "**/*.{yaml,yml,json,md,js}"
 
   security:
-    name: Security & Secrets
-    runs-on: ubuntu-latest
+    name: PR Security Scan
+    uses: ./.github/workflows/security-scan-base.yml
     permissions:
       contents: read
       security-events: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Scan for Leaked Secrets
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run Trivy Vulnerability Scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          exit-code: '0'
-          ignore-unfixed: true
-
-      - name: Upload Trivy Scan Results to GitHub Security Tab
-        uses: github/codeql-action/upload-sarif@v4
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
 
   terraform:
     name: Terraform Validation

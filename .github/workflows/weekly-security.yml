@@ -1,0 +1,19 @@
+name: Weekly Security Audit
+
+on:
+  schedule:
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scheduled-scan:
+    name: Weekly Audit
+    uses: ./.github/workflows/security-scan-base.yml
+    with:
+      trivy-exit-code: '0'
+    permissions:
+      contents: read
+      security-events: write
