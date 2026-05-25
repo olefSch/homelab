@@ -58,3 +58,28 @@ jobs:
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
+
+  terraform:
+    name: Terraform Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform & TFLint
+        uses: ./.github/actions/setup-terraform
+
+      - name: Check Terraform Formatting
+        run: terraform fmt -check -recursive ./terraform
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+        working-directory: ./terraform
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./terraform
+
+      - name: Run TFLint
+        run: tflint --recursive
+        working-directory: ./terraform
