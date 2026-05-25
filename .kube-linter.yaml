@@ -1,0 +1,9 @@
+checks:
+  # docs to look through defaults and optional checks: https://docs.kubelinter.io/#/generated/checks
+  doNotAutoAddDefaults: false
+  exclude: []
+  include:
+    - no-liveness-probe
+    - no-readiness-probe
+    - dangling-ingress
+    - use-namespace
