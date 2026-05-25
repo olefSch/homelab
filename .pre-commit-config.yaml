@@ -36,8 +36,6 @@ repos:
       - id: terraform_fmt
       - id: terraform_validate
       - id: terraform_tflint
-        args:
-          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
       - id: terraform_trivy
 
   - repo: https://github.com/stackrox/kube-linter
