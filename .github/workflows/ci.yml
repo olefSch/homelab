@@ -76,6 +76,9 @@ jobs:
 
       - name: Setup Kubernetes Tools
         uses: ./.github/actions/setup-k8s-tooling
+        with:
+          kubeconform-sha256: 'c31518ddd122663b3f3aa874cfe8178cb0988de944f29c74a0b9260920d115d3'
+          kube-linter-sha256: '1a6d8419b11971372971fdbc22682b684ebfb7cf1c39591662d1b6ca736c41df'
 
       - name: Lint and Render Local Helm Charts
         run: |
