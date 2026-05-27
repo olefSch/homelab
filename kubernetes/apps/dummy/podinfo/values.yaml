@@ -1,0 +1,13 @@
+replicaCount: 2
+
+ui:
+  color: '#34577c'
+  message: 'Hello from my K3s GitOps cluster!'
+
+resources:
+  limits:
+    memory: 128Mi
+    cpu: 100m
+  requests:
+    memory: 32Mi
+    cpu: 10m

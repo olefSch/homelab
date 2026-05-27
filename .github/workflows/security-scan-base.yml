@@ -1,0 +1,43 @@
+name: Security Scan Base
+
+on:
+  workflow_call:
+    inputs:
+      trivy-exit-code:
+        description: 'Trivy exit code (1 to fail the pipeline, 0 to pass gracefully)'
+        type: string
+        default: '1'
+
+jobs:
+  security:
+    name: Security & Secrets
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Scan for Leaked Secrets
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: 'fs'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          exit-code: ${{ inputs.trivy-exit-code }}
+          ignore-unfixed: true
+
+      - name: Upload Trivy Scan Results to GitHub Security Tab
+        uses: github/codeql-action/upload-sarif@7211b7c8077ea37d8641b6271f6a365a22a5fbfa # v4.36.0
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'

@@ -1,0 +1,65 @@
+name: 'Setup K8s Validation Tools'
+description: 'Installs Helm, Kubeconform, and Kube-linter with caching'
+
+inputs:
+  helm-version:
+    description: 'Version of Helm to install'
+    default: 'v4.2.0'
+  kubeconform-version:
+    description: 'Version of Kubeconform to install'
+    default: 'v0.7.0'
+  kubeconform-sha256:
+    description: 'Expected SHA256 checksum for the Kubeconform linux-amd64 tarball'
+    required: true
+  kube-linter-version:
+    description: 'Version of Kube-linter to install'
+    default: '0.8.3'
+  kube-linter-sha256:
+    description: 'Expected SHA256 checksum for the Kube-linter linux tarball'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Helm
+      uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
+      with:
+        version: ${{ inputs.helm-version }}
+
+    - name: Cache K8s Tools
+      id: cache-tools
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+      with:
+        path: ~/.k8s-tools
+        key:
+          k8s-tools-${{ inputs.kubeconform-version }}-${{ inputs.kubeconform-sha256 }}-${{
+          inputs.kube-linter-version }}-${{ inputs.kube-linter-sha256 }}
+
+    - name: Install Tools (if not cached)
+      if: steps.cache-tools.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        mkdir -p ~/.k8s-tools
+
+        echo "=== Installing Kubeconform ==="
+        curl --silent --location --output kubeconform.tar.gz "https://github.com/yannh/kubeconform/releases/download/${{ inputs.kubeconform-version }}/kubeconform-linux-amd64.tar.gz"
+
+        echo "${{ inputs.kubeconform-sha256 }}  kubeconform.tar.gz" | sha256sum --check -
+
+        tar -xzf kubeconform.tar.gz kubeconform
+        mv kubeconform ~/.k8s-tools/
+        rm kubeconform.tar.gz
+
+        echo "=== Installing Kube-linter ==="
+        curl --silent --location --output kube-linter.tar.gz "https://github.com/stackrox/kube-linter/releases/download/v${{ inputs.kube-linter-version }}/kube-linter-linux.tar.gz"
+
+        # Verify checksum before extraction
+        echo "${{ inputs.kube-linter-sha256 }}  kube-linter.tar.gz" | sha256sum --check -
+
+        tar -xzf kube-linter.tar.gz kube-linter
+        mv kube-linter ~/.k8s-tools/
+        rm kube-linter.tar.gz
+
+    - name: Add Tools to PATH
+      shell: bash
+      run: echo "$HOME/.k8s-tools" >> $GITHUB_PATH

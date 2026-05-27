@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: podinfo
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: 'https://stefanprodan.github.io/podinfo'
+      chart: podinfo
+      targetRevision: 6.6.0
+      helm:
+        valueFiles:
+          - $my-git-repo/kubernetes/apps/dummy/podinfo/values.yaml
+
+    - repoURL: 'https://github.com/olefSch/homelab.git'
+      targetRevision: HEAD
+      ref: my-git-repo
+
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: podinfo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

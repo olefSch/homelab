@@ -1,0 +1,115 @@
+name: CI Checks
+
+on:
+  pull_request:
+    branches: ['main']
+
+permissions:
+  contents: read
+
+jobs:
+  code-hygiene:
+    name: Format & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Lint GitHub Actions
+        uses: raven-actions/actionlint@205b530c5d9fa8f44ae9ed59f341a0db994aa6f8 # v2.1.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+
+      - name: Check Prettier Formatting
+        run: npx prettier@3.8.3 --check "**/*.{yaml,yml,json,md,js}"
+
+  security:
+    name: PR Security Scan
+    uses: ./.github/workflows/security-scan-base.yml
+    permissions:
+      contents: read
+      security-events: write
+
+  terraform:
+    name: Terraform Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Terraform & TFLint
+        uses: ./.github/actions/setup-terraform
+
+      - name: Check Terraform Formatting
+        run: terraform fmt -check -recursive ./terraform
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+        working-directory: ./terraform
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./terraform
+
+      - name: Run TFLint
+        run: tflint --recursive
+        working-directory: ./terraform
+
+  validate-manifests:
+    name: Lint and Validate Kubernetes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Kubernetes Tools
+        uses: ./.github/actions/setup-k8s-tooling
+        with:
+          kubeconform-sha256: 'c31518ddd122663b3f3aa874cfe8178cb0988de944f29c74a0b9260920d115d3'
+          kube-linter-sha256: '1a6d8419b11971372971fdbc22682b684ebfb7cf1c39591662d1b6ca736c41df'
+
+      - name: Lint and Render Local Helm Charts
+        run: |
+          mkdir -p rendered-charts
+
+          if [ -d "kubernetes/charts" ]; then
+            CHARTS=$(find kubernetes/charts -type f -name 'Chart.yaml' -exec dirname {} \;)
+            for chart in $CHARTS; do
+              echo "=== Processing Local Chart: $chart ==="
+
+              helm lint "$chart" --strict
+
+              chart_name=$(basename "$chart")
+              helm template "$chart_name" "$chart" --include-crds > "rendered-charts/${chart_name}.yaml"
+            done
+          else
+            echo "No kubernetes/charts directory found. Skipping."
+          fi
+
+      - name: Kubeconform Schema Validation
+        run: |
+          kubeconform -strict -summary \
+            -schema-location default \
+            -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \
+            -ignore-missing-schemas \
+            -ignore-filename-pattern 'values.yaml' \
+            kubernetes/root-app.yaml \
+            kubernetes/argocd-apps/ \
+            kubernetes/k3s-manifests/ \
+            rendered-charts/
+
+      - name: Kube-Linter Policy Validation
+        run: |
+          echo "=== Linting Raw Manifests ==="
+          kube-linter lint kubernetes/root-app.yaml kubernetes/argocd-apps/ kubernetes/k3s-manifests/ --config .kube-linter.yaml
+
+          echo "=== Linting Rendered Local Charts ==="
+          if [ -d "rendered-charts" ] && [ "$(ls -A rendered-charts)" ]; then
+            kube-linter lint rendered-charts/ --config .kube-linter.yaml
+          fi
