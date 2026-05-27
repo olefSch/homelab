@@ -4,10 +4,6 @@ on:
   pull_request:
     branches: ['main']
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  PRETTIER_VERSION: '3.8.3'
-
 permissions:
   contents: read
 
@@ -17,20 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
 
       - name: Lint GitHub Actions
-        uses: raven-actions/actionlint@v2
+        uses: raven-actions/actionlint@205b530c5d9fa8f44ae9ed59f341a0db994aa6f8 # v2.1.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
 
       - name: Check Prettier Formatting
-        run: npx prettier@${{ env.PRETTIER_VERSION }} --check "**/*.{yaml,yml,json,md,js}"
+        run: npx prettier@3.8.3 --check "**/*.{yaml,yml,json,md,js}"
 
   security:
     name: PR Security Scan
@@ -44,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Terraform & TFLint
         uses: ./.github/actions/setup-terraform
@@ -69,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           persist-credentials: false

@@ -22,16 +22,18 @@ runs:
   using: 'composite'
   steps:
     - name: Setup Helm
-      uses: azure/setup-helm@v4
+      uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
       with:
         version: ${{ inputs.helm-version }}
 
     - name: Cache K8s Tools
       id: cache-tools
-      uses: actions/cache@v4
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: ~/.k8s-tools
-        key: k8s-tools-${{ inputs.kubeconform-version }}-${{ inputs.kube-linter-version }}
+        key:
+          k8s-tools-${{ inputs.kubeconform-version }}-${{ inputs.kubeconform-sha256 }}-${{
+          inputs.kube-linter-version }}-${{ inputs.kube-linter-sha256 }}
 
     - name: Install Tools (if not cached)
       if: steps.cache-tools.outputs.cache-hit != 'true'
