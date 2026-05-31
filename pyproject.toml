@@ -1,0 +1,8 @@
+[project]
+name = "homelab"
+version = "0.1.0"
+description = "For Internal documentation, Architecture Decision Records (ADRs), and runbooks for the GitOps K3s Raspberry Pi Homelab."
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{ name = "olefSch" }]
+dependencies = ["zensical>=0.0.43"]
