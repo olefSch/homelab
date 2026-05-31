@@ -1,3 +1,6 @@
+# general
+.cache/
+
 # Terraform
 .terraform/
 *.tfstate
@@ -18,3 +21,9 @@ secrets.yaml
 
 # K8s
 .kube/
+
+# python
+.venv/
+
+# zensical
+site/
