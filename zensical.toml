@@ -19,5 +19,19 @@ nav = [
   ] },
 ]
 
-[theme]
-name = "modern"
+[project.theme]
+name = "zensical"
+variant = "modern"
+custom_dir = "overrides"
+
+[[project.theme.palette]]
+scheme = "slate"
+[project.theme.palette.toggle]
+icon = "material/brightness-4"
+name = "Switch to light mode"
+
+[[project.theme.palette]]
+scheme = "default"
+[project.theme.palette.toggle]
+icon = "material/brightness-7"
+name = "Switch to dark mode"
