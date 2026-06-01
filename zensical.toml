@@ -2,20 +2,30 @@
 site_name = "GitOps Homelab"
 site_url = "https://homelab.ole-schildt.com/"
 docs_dir = "docs"
+repo_url = "https://github.com/olefSch/homelab"
+repo_name = "olefSch/homelab"
+
+copyright = """
+Copyright &copy; 2026 Ole Schildt
+"""
 
 nav = [
   { "Home" = "index.md" },
-  { "Architecture Decisions" = [
-    "adrs/000-template.md",
+
+  { "Architecture" = [
+    { "Getting Started" = "architecture/getting-started.md" },
   ] },
-  { "Platform Architecture" = [
-    "architecture/getting-started.md",
+
+  { "Data Platform" = [
+    { "General Overview" = "data-platform/general-overview.md" },
   ] },
-  { "My Data Platform" = [
-    "data-platform/general-overview.md",
-  ] },
+
   { "Runbooks" = [
-    "runbooks/zero-touch-rpi-provisioning.md",
+    { "Zero Touch RPi" = "runbooks/zero-touch-rpi-provisioning.md" },
+  ] },
+
+  { "ADRs" = [
+    { "Template" = "adrs/000-template.md" },
   ] },
 ]
 
@@ -23,6 +33,18 @@ nav = [
 name = "zensical"
 variant = "modern"
 custom_dir = "overrides"
+language = "en"
+
+features = [
+  "navigation.tabs",
+  "navigation.sections",
+  "navigation.path",
+  "navigation.top",
+  "navigation.tracking",
+  "toc.follow",
+  "search.suggest",
+  "search.highlight",
+]
 
 [[project.theme.palette]]
 scheme = "slate"
@@ -35,3 +57,6 @@ scheme = "default"
 [project.theme.palette.toggle]
 icon = "material/brightness-7"
 name = "Switch to dark mode"
+
+[project.theme.icon]
+repo = "fontawesome/brands/git-alt"
