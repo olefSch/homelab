@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitOps Homelab - Terminal Mode</title>
+
+    <link rel="icon" type="image/png" href="/assets/fav-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* DARK MODE (DEFAULT) */
+      :root {
+        --bg-main: #09090b;
+        --bg-hover: #1c1c21;
+        --border: #27272a;
+        --text-main: #ededed;
+        --text-muted: #888888;
+        --text-accent: #555555;
+        --scanline: rgba(0, 0, 0, 0.15);
+        --indicator: #10b981; /* Green */
+      }
+
+      /* LIGHT MODE OVERRIDES */
+      :root[data-theme='light'] {
+        --bg-main: #fcfcfc;
+        --bg-hover: #f0f0f0;
+        --border: #e4e4e7;
+        --text-main: #18181b;
+        --text-muted: #71717a;
+        --text-accent: #a1a1aa;
+        --scanline: rgba(0, 0, 0, 0.04);
+        --indicator: #eab308;
+      }
+
+      body {
+        margin: 0;
+        height: 100vh;
+        overflow: hidden;
+        background: var(--bg-main);
+        color: var(--text-main);
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-font-smoothing: antialiased;
+        position: relative;
+        transition:
+          background 0.3s ease,
+          color 0.3s ease;
+      }
+
+      body::after {
+        content: ' ';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, var(--scanline) 50%);
+        background-size: 100% 4px;
+        z-index: 50;
+        pointer-events: none;
+      }
+
+      /* Top Bar Elements */
+      .top-bar {
+        position: absolute;
+        top: 2rem;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 2.5rem;
+        box-sizing: border-box;
+        font-size: 0.8rem;
+        color: var(--text-accent);
+        line-height: 1.6;
+        z-index: 10;
+      }
+
+      .theme-toggle {
+        background: none;
+        border: none;
+        color: var(--text-accent);
+        font-family: inherit;
+        font-size: 0.8rem;
+        cursor: pointer;
+        padding: 0;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      .stats {
+        text-align: right;
+      }
+      .stats .val {
+        color: var(--text-main);
+        font-weight: 700;
+      }
+      .stats .dot {
+        color: var(--indicator);
+        animation: blink 1s step-end infinite;
+      }
+
+      /* Layout & Typography */
+      .hub {
+        width: 100%;
+        max-width: 640px;
+        padding: 2rem;
+        box-sizing: border-box;
+        z-index: 10;
+      }
+      h1 {
+        font-size: clamp(2.5rem, 6vw, 3.5rem);
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+        color: var(--text-main);
+      }
+      .prompt {
+        color: var(--text-accent);
+        margin-right: 0.5rem;
+      }
+      p {
+        color: var(--text-muted);
+        font-size: clamp(0.9rem, 2vw, 1.1rem);
+        margin-bottom: 4rem;
+      }
+
+      .cursor {
+        display: inline-block;
+        width: 10px;
+        height: 1.1rem;
+        background-color: var(--text-muted);
+        vertical-align: text-bottom;
+        margin-left: 5px;
+        animation: blink 1s step-end infinite;
+      }
+
+      /* Navigation */
+      nav {
+        display: flex;
+        flex-direction: column;
+        border-top: 1px dotted var(--text-accent);
+      }
+      a {
+        display: flex;
+        align-items: center;
+        padding: 1.25rem 0.5rem;
+        text-decoration: none;
+        color: var(--text-main);
+        font-size: 1rem;
+        border-bottom: 1px dotted var(--text-accent);
+      }
+      a::before {
+        content: '[ ]';
+        color: var(--text-accent);
+        margin-right: 1.5rem;
+        font-weight: 700;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      a:hover {
+        background: var(--text-main);
+        color: var(--bg-main);
+      }
+      a:hover::before {
+        content: '[X]';
+        color: var(--bg-main);
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .top-bar {
+          top: 1.5rem;
+          padding: 0 1.5rem;
+        }
+        .hub {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <div>
+        <button class="theme-toggle" id="themeBtn">[SYS.PREF: DARK]</button>
+      </div>
+      <div class="stats">
+        <span class="dot">█</span> <span id="sys-status">SYS.SYNC_OK</span><br />
+        ADRs_ACTIVE=<span class="val">1</span>
+      </div>
+    </div>
+
+    <main class="hub">
+      <h1><span class="prompt">~/</span>Homelab</h1>
+      <p>GitOps infrastructure and my small data platform<span class="cursor"></span></p>
+
+      <nav>
+        <a href="architecture/getting-started/">ARCHITECTURE.md</a>
+        <a href="data-platform/general-overview/">MY_DATA_PLATFORM.md</a>
+        <a href="runbooks/zero-touch-rpi-provisioning/">RUNBOOKS.md</a>
+        <a href="adrs/000-template/">ADRs.md</a>
+      </nav>
+    </main>
+
+    <script>
+      const htmlEl = document.documentElement;
+      const themeBtn = document.getElementById('themeBtn');
+      const sysStatus = document.getElementById('sys-status');
+
+      function getSharedTheme() {
+        try {
+          const stored = localStorage.getItem('/.__palette') || localStorage.getItem('__palette');
+          if (stored) {
+            const palette = JSON.parse(stored);
+            if (palette.color && palette.color.scheme === 'default') return 'light';
+          }
+        } catch (e) {}
+
+        return 'dark';
+      }
+
+      function setSharedTheme(theme) {
+        htmlEl.setAttribute('data-theme', theme);
+
+        themeBtn.textContent = `[MODE: ${theme.toUpperCase()}]`;
+
+        const isDark = theme === 'dark';
+
+        if (sysStatus) {
+          if (isDark) {
+            sysStatus.textContent = 'SYS.SYNC_OK';
+          } else {
+            sysStatus.textContent = 'SYS.WARN: MODE LIGHT';
+          }
+        }
+
+        const paletteState = {
+          index: isDark ? 0 : 1,
+          color: { scheme: isDark ? 'slate' : 'default' },
+        };
+
+        const stateStr = JSON.stringify(paletteState);
+        localStorage.setItem('/.__palette', stateStr);
+        localStorage.setItem('__palette', stateStr);
+      }
+
+      let currentTheme = getSharedTheme();
+      setSharedTheme(currentTheme);
+
+      themeBtn.style.cursor = 'pointer';
+      themeBtn.addEventListener('click', () => {
+        currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setSharedTheme(currentTheme);
+      });
+    </script>
+  </body>
+</html>
