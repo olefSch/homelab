@@ -2,11 +2,11 @@
 
 <div align="center">
 
-_My fully automated, GitOps-driven infrastructure repository managing my K3s raspberry pi homelab_
+_My fully automated, GitOps-driven infrastructure repository managing my K3s Raspberry Pi homelab_
 
 </div>
 
-## 🛠️ Build with
+## 🛠️ Built with
 
 ![K3S](https://img.shields.io/badge/-K3s-FFC61C?style=for-the-badge&logo=k3s&logoColor=white)
 ![argo_cd](https://img.shields.io/badge/-Argo-EF7B4D?style=for-the-badge&logo=argo&logoColor=white)
@@ -19,7 +19,7 @@ _My fully automated, GitOps-driven infrastructure repository managing my K3s ras
 ## **📖 Overview**
 
 This repository is the single source of truth for my Homelab infrastructure. It utilizes
-Infrastructure-as-Code (IaC) to provision foundational resources that I do not want to host(e.g.
+Infrastructure-as-Code (IaC) to provision foundational resources that I do not want to host (e.g.,
 KeyVault) and GitOps principles to manage all Kubernetes cluster configurations and workloads.
 
 The base for the repo is my zero touch provisioning repo
@@ -32,7 +32,7 @@ The base for the repo is my zero touch provisioning repo
 | **Kubernetes** | [K3s](https://k3s.io/)                                 | Lightweight, edge-optimized Kubernetes                  |
 | **GitOps**     | [ArgoCD](https://argo-cd.readthedocs.io/en/stable/)    | App-of-Apps cluster workload bootstrapping              |
 | **IaC**        | [Terraform](https://developer.hashicorp.com/terraform) | Manages external infrastructure state and provisioning. |
-| **Docs**       | [Zensical](https://zensical.org/)                      | Successor from Material for MkDocs                      |
+| **Docs**       | [Zensical](https://zensical.org/)                      | Successor to Material for MkDocs                        |
 
 ## **📂 Repository Structure**
 
