@@ -35,7 +35,7 @@
         --text-muted: #71717a;
         --text-accent: #a1a1aa;
         --scanline: rgba(0, 0, 0, 0.04);
-        --indicator: #ef4444; /* Red indicator for light mode */
+        --indicator: #eab308;
       }
 
       body {
@@ -202,8 +202,8 @@
         <button class="theme-toggle" id="themeBtn">[SYS.PREF: DARK]</button>
       </div>
       <div class="stats">
-        <span class="dot">█</span> SYS.SYNC_OK<br />
-        ADRS_ACTIVE=<span class="val">1</span>
+        <span class="dot">█</span> <span id="sys-status">SYS.SYNC_OK</span><br />
+        ADRs_ACTIVE=<span class="val">1</span>
       </div>
     </div>
 
@@ -222,6 +222,7 @@
     <script>
       const htmlEl = document.documentElement;
       const themeBtn = document.getElementById('themeBtn');
+      const sysStatus = document.getElementById('sys-status');
 
       function getSharedTheme() {
         try {
@@ -237,9 +238,19 @@
 
       function setSharedTheme(theme) {
         htmlEl.setAttribute('data-theme', theme);
+
         themeBtn.textContent = `[MODE: ${theme.toUpperCase()}]`;
 
         const isDark = theme === 'dark';
+
+        if (sysStatus) {
+          if (isDark) {
+            sysStatus.textContent = 'SYS.SYNC_OK';
+          } else {
+            sysStatus.textContent = 'SYS.WARN: MODE LIGHT';
+          }
+        }
+
         const paletteState = {
           index: isDark ? 0 : 1,
           color: { scheme: isDark ? 'slate' : 'default' },

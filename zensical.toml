@@ -32,7 +32,7 @@ nav = [
 [project.theme]
 name = "zensical"
 variant = "modern"
-custom_dir = "overrides"
+custom_dir = "docs/overrides"
 language = "en"
 favicon = "assets/fav-icon.png"
 
