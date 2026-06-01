@@ -34,6 +34,7 @@ name = "zensical"
 variant = "modern"
 custom_dir = "overrides"
 language = "en"
+favicon = "assets/fav-icon.png"
 
 features = [
   "navigation.tabs",
