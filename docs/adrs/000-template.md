@@ -1,4 +1,4 @@
-# Title: _Clear and concise title of the decision_
+# Template
 
 | Attribute  | Details                                       |
 | :--------- | :-------------------------------------------- |

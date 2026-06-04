@@ -13,19 +13,31 @@ nav = [
   { "Home" = "index.md" },
 
   { "Architecture" = [
-    { "Getting Started" = "architecture/getting-started.md" },
+    { "System Overview" = "architecture/00-system-overview.md" },
+    { "K3s Cluster Design" = "architecture/01-k3s-cluster-design.md" },
+    { "Core Networking" = "architecture/02-core-networking.md" },
+    { "Storage & Persistence" = "architecture/03-storage-persistence.md" },
+    { "Identity & Secrets" = "architecture/04-identity-and-secrets.md" },
+    { "Observability" = "architecture/05-observability.md" },
   ] },
 
-  { "Data Platform" = [
-    { "General Overview" = "data-platform/general-overview.md" },
+  { "Services" = [
+    { "All Services" = "services/00-list-of-all.md" },
+  ] },
+
+  { "Operations" = [
+    { "Update K3s Version" = "sops/update-k3s-version.md" },
   ] },
 
   { "Runbooks" = [
-    { "Zero Touch RPi" = "runbooks/zero-touch-rpi-provisioning.md" },
+    { "Zero Touch RPi Provisioning" = "runbooks/01-zero-touch-rpi-provisioning.md" },
   ] },
 
-  { "ADRs" = [
+  { "Architecture Decision Records" = [
     { "Template" = "adrs/000-template.md" },
+    { "ADR 001: K3s HA on Bare Metal" = "adrs/001-k3s-ha-bare-metal.md" },
+    { "ADR 002: ArgoCD for GitOps" = "adrs/002-argocd-for-gitops.md" },
+    { "ADR 003: Zero Touch Provisioning" = "adrs/003-zero-touch-provisioning.md" },
   ] },
 ]
 
