@@ -51,7 +51,7 @@ traffic to the master nodes, which breaks the goal of having a self-contained 4-
   environments.
 - :material-minus-circle-outline: High RAM and CPU consumption due to running many separate
   components.
-- :material-minus-circle-outline: Package management is locked into Canonical's snap system(I don't
+- :material-minus-circle-outline: Package management is locked into Canonical's snap system (I don't
   like snap).
 - :material-minus-circle-outline: Requires an external physical or virtual machine to act as a load
   balancer for the master nodes.
@@ -105,7 +105,33 @@ deployment of storage and load balancers.
 - :material-minus-circle-outline: Completely lacks built-in local storage provisioners or
   auto-deploy directories, requiring more manual intervention on Day 1.
 - :material-minus-circle-outline: Smaller homelab community compared to K3s when looking for ARM64
-  troubleshooting help.---
+  troubleshooting help.
+
+### Option 4: Talos Linux {: data-toc-label="Talos Linux" }
+
+_Using Talos Linux, an immutable and minimal operating system built specifically to run Kubernetes
+securely and efficiently._
+
+[Talos Linux][tl] is fundamentally different because it is both the operating system and the
+Kubernetes distribution. There is no SSH, no console, and no standard Linux shell. Everything is
+managed through an API. This allows for a completely declarative, GitOps-ready infrastructure where
+even the OS configuration is stored as code. While it handles High Availability and Virtual IP
+management perfectly out of the box, it does not include built-in storage or auto-deploy tools.
+
+- :material-plus-circle-outline: Extremely secure and lightweight due to the removal of unnecessary
+  OS components.
+- :material-plus-circle-outline: True "Infrastructure as Code" since the entire OS is configured via
+  a single YAML file.
+- :material-plus-circle-outline: Virtual IP (VIP) is managed natively by the OS before Kubernetes
+  even starts, making networking highly reliable.
+- :material-minus-circle-outline: No traditional access (SSH) makes troubleshooting hardware issues
+  (like USB SSD connections with the JMicron controller ^-^) on a Raspberry Pi very difficult.
+- :material-minus-circle-outline: Requires manual installation of a storage provisioner and GitOps
+  tools (no built-in manifests folder).
+- :material-minus-circle-outline: Default strict separation of master and worker nodes wastes
+  hardware unless manually reconfigured.
+
+---
 
 ## Decision
 
@@ -115,22 +141,29 @@ deployment of storage and load balancers.
 
 ### Rationale
 
-When the three options are compared, K3s is considered the best fit for the specific constraints.
+When the four options are compared, K3s is considered the best fit for the specific constraints.
 
 MicroK8s is deemed too heavy, and an external load balancer is required by it, which is not
-available in this setup. A beautiful, secure architecture is provided by k0s, but the computing
-power of the three Raspberry Pi 5s would be wasted by its default strict separation of master and
-worker nodes. Furthermore, k0s lacks native Day 1 storage and auto-deploy capabilities.
+available in this setup.
+
+A beautiful, secure architecture is provided by both k0s and Talos Linux through a strict separation
+of master and worker nodes by default. While these taints and isolations can be manually removed to
+allow master nodes to run user workloads, doing so requires extra configuration files and overrides
+on Day 1. Furthermore, even if master nodes are configured to run workloads, native local storage
+provisioners are still completely missing from both k0s and Talos Linux out of the box.
+Troubleshooting hardware on Raspberry Pis is also made much harder by Talos Linux because
+traditional SSH access is completely removed by it, which is a major disadvantage when extra USB
+hardware or specialized tooling is attached to the Pis.
 
 The perfect middle ground is offered by K3s. It is recognized as the undisputed standard for ARM64
-homelabs. By utilizing embedded `etcd`, High Availability is achieved without external databases
-being needed. Because K3s master nodes act as workers as well, the cluster can be managed and heavy
+homelabs. By utilizing embedded etcd, High Availability is achieved without external databases being
+needed. Because K3s master nodes act as workers as well, the cluster can be managed and heavy
 applications can be run by the three Raspberry Pi 5s, while lighter worker tasks are handled by the
 older RPi 3b+.
 
-Crucially, zero-touch GitOps bootstrapping is facilitated by the K3s manifests auto-deploy folder,
-allowing the cluster to start pulling from Git the moment it boots. Immediate disk usage is also
-guaranteed by the built-in Local Path Provisioner.
+Crucially, zero-touch GitOps bootstrapping is facilitated by the K3s manifests auto-deploy folder.
+By this feature, the cluster is allowed to start pulling from Git the moment it boots. Immediate
+disk usage is also guaranteed by the built-in Local Path Provisioner.
 
 To solve the networking constraint, network routing is managed internally by Kube-vip, which is run
 inside the cluster. If master node 1 fails, the connection is instantly moved to master node 2 by
@@ -149,8 +182,23 @@ By choosing a self-contained HA architecture without external network dependenci
 fulfills a very strong baseline for zero-touch provisioning. This is covered in more detail here in
 [ADR-003](./003-zero-touch-provisioning.md){ data-preview }.
 
+---
+
+## Future Outlook: Staging and Production Environments
+
+A future expansion of this architecture would be a cool project. The current Raspberry Pi K3s
+cluster will eventually be transitioned into a Staging (QA) environment. A new Production
+environment will be built later using x86_64 hardware, such as three HP EliteDesk Mini PCs, running
+Talos Linux.
+
+By this approach, the pure Infrastructure-as-Code capabilities of Talos Linux can be utilized for
+production, while the flexibility of K3s is retained for testing. The differences between the
+Kubernetes distributions are handled seamlessly by the GitOps pipeline, since standard upstream
+Kubernetes is run by both. All in all, this is something for far in the future :)
+
 [k3s]: https://k3s.io/
 [ka]: https://docs.k3s.io/architecture
 [kv]: https://kube-vip.io/docs/usage/k3s/
 [mk]: https://canonical.com/microk8s
 [k0s]: https://docs.k0sproject.io/stable/
+[tl]: https://www.siderolabs.com/talos-linux
