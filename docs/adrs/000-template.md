@@ -1,46 +1,83 @@
-# Title: _Clear and concise title of the decision_
+---
+tags:
+  - adr
+  - draft
+---
 
-| Attribute  | Details                                       |
-| :--------- | :-------------------------------------------- |
-| **Status** | _Draft \| Accepted \| Rejected \| Deprecated_ |
-| **Date**   | _YYYY-MM-DD_                                  |
-| **Author** | Ole Schildt                                   |
+# ADR XXX: Template[^1]
 
-## Context
+!!! abstract "Metadata"
 
-**Problem:** _Clearly state the problem or challenge that needs to be addressed._
+    - **Status:** 🟡 Draft
+    - **Date:** YYYY-MM-DD
+    - **Author:** Ole Schildt
 
-**Goals:** _Outline the desired outcomes or objectives of the decision._
+## Context & Motivation
 
-**Constraints:** _Identify any technical, resource, or time constraints._
+**The Problem:**
+
+_The problem or challenge is clearly stated here. The reason this topic was brought up now is
+explained._
+
+**Constraints:**
+
+_Specific constraints for the environment are identified._
+
+---
+
+## Options Considered
+
+### Option 1: ABC {: data-toc-label="ABC" }
+
+_Description of this architectural approach and how the core problem is addressed by it._
+
+_Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+labore et dolore magna aliquyam erat, sed diam voluptua._
+
+- :material-plus-circle-outline: Lorem ipsum dolor sit amet, consetetur sadipscing elitr
+- :material-minus-circle-outline: Lorem ipsum dolor sit amet, consetetur sadipscing elitr
+
+### Option 2: XYZ {: data-toc-label="XYZ" }
+
+_Description of this architectural approach and how the core problem is addressed by it._
+
+_Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+labore et dolore magna aliquyam erat, sed diam voluptua._
+
+- :material-plus-circle-outline: Lorem ipsum dolor sit amet, consetetur sadipscing elitr
+- :material-minus-circle-outline: Lorem ipsum dolor sit amet, consetetur sadipscing elitr
+
+---
 
 ## Decision
 
-**Options:** _State the possible solutions or approaches._
+!!! success "Final Decision: _Chosen Option_"
 
-**Decision:** _State the chosen solution or approach._
+    **ABC** will be implemented to solve ...
 
-**Rationale:** _Explain the reasoning behind the decision._
+### Rationale
+
+_The exact reasons why this was chosen over the alternatives, and the trade-offs being accepted, are
+explained here._
+
+---
 
 ## Alignment
 
-**Related artifacts:** _List the related architecture, design, or scope documents that this decision
-impacts._
+_How the primary design goals are met by this decision._
 
-**Related decisions:** _Many decisions are related; you can list them here._
+_Other relevant [ADRs](./001-k3s-ha-bare-metal.md){ data-preview } are also linked here._
 
-## Consequences
+---
 
-**Positive Consequences:** _List the expected benefits of the decision._
+## Additional
 
-**Negative Consequences:** _Identify potential drawbacks or risks._
+_Only if needed._
 
-**Technical Debt:** _Acknowledge any technical debt incurred by the decision._
-
-## Additional Information
-
-**References:** _Links to relevant documents, articles, or discussions._
-
-**Diagrams:** _Visual representations of the decision or its implications._
-
-**Code Examples:** _Code snippets illustrating the implementation of the decision._
+[^1]: More about ADRs can be found [here](https://adr.github.io/)

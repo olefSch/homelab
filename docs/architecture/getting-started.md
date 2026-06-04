@@ -1,3 +1,0 @@
-# My Homelab Architecture
-
-coming ...
