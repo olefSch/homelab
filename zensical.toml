@@ -41,12 +41,16 @@ nav = [
   ] },
 ]
 
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.pymdownx.emoji]
+
 [project.theme]
 name = "zensical"
 variant = "modern"
 custom_dir = "docs/overrides"
 language = "en"
 favicon = "assets/fav-icon.png"
+logo = "assets/fav-icon.png"
 
 features = [
   "navigation.tabs",
