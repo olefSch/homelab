@@ -5,7 +5,9 @@ repos:
     rev: v6.0.0
     hooks:
       - id: trailing-whitespace
+        exclude: \.excalidraw$
       - id: end-of-file-fixer
+        exclude: \.excalidraw$
       - id: check-added-large-files
         args: ['--maxkb=250']
       - id: check-merge-conflict
