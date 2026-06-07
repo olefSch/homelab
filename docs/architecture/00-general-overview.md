@@ -21,7 +21,7 @@ principles.
 ## Physical Cluster Setup
 
 The physical foundation of the cluster is housed in a compact, custom rack enclosure specifically
-for Raspberry Pis to bundle those with SSDs.
+designed to bundle Raspberry Pis with SSDs.
 
 ![Physical Homelab Cluster Setup](./../assets/real-cluster.jpg)
 
@@ -42,8 +42,8 @@ The hardware layer is designed for efficiency and minimal cable clutter:
 
 The entire cluster lifecycle, from initial hardware provisioning to application deployment, is
 managed through public code repositories. This ensures the setup is reproducible,
-version-controlled, and self-documenting. Having it public also forces me to apply to best security
-standards the moment I have public facing endpoints.
+version-controlled, and self-documenting. Having it public also forces me to apply the best security
+standards the moment I have public-facing endpoints.
 
 ### Node Provisioning
 

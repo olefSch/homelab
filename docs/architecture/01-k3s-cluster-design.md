@@ -40,7 +40,7 @@ incoming management traffic strictly to that active leader.
 ### The Control Plane
 
 The middle section shows the K3s Control Plane, powered by three Raspberry Pi 5 nodes. Each node
-runs a bundled set of K3s services(all out of single-binary):
+runs a bundled set of K3s services (all out of single-binary):
 
 - API Server, Scheduler, and Controller Manager: The core logic of the cluster.
 - _Embedded etcd_: The database that stores the cluster's state. The horizontal arrows connecting
@@ -53,7 +53,7 @@ runs a bundled set of K3s services(all out of single-binary):
 
 ### The Worker Node
 
-At the bottom is the dedicated Worker Node (my old Raspberry Pi 3b+). Notice that the connection
+At the bottom is the dedicated Worker Node (my old Raspberry Pi 3B+). Notice that the connection
 line from the worker node points up to the VIP, not to a specific master node. This is a critical HA
 feature: if the leader master node loses power, the VIP automatically moves to a surviving master,
 and the worker node seamlessly stays connected to the cluster. The worker node is stripped down to
@@ -63,14 +63,14 @@ only run worker services, providing dedicated compute power for application Pods
 
     For deeper technical specifications regarding the single-binary design, embedded etcd, and
     networking, refer to the [official K3s Architecture documentation](https://docs.k3s.io/architecture).
-    I also did not mention all services like e.g. Flannel so better check the docs out.
+    This overview also doesn’t cover all services (for example, Flannel), so please refer to the official docs for details.
 
 ---
 
 ## VIP via kube-vip
 
-To provide a single, highly available point of contact across three separate master nodes, a Virtual
-IP VIP is established using kube-vip.
+To provide a single, highly available point of contact across three separate master nodes, VIP is
+established using kube-vip.
 
 Because there are three physical master nodes, there are three different physical IP addresses.
 Kube-vip creates a single, floating IP address that external clients (like your laptop's `kubectl`)
