@@ -85,12 +85,13 @@ spec:
           command:
             - /kube-vip-cloud-provider
             - --leader-elect-resource-name=plndr-cp-lock
-            - --configmap-name=kubevip-configmap
           env:
-            - name: LB_NAMESPACE
+            - name: KUBEVIP_NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: KUBEVIP_CONFIG_MAP
+              value: kubevip-configmap
           resources:
             requests:
               cpu: 25m
