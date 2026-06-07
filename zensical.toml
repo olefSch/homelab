@@ -13,7 +13,7 @@ nav = [
   { "Home" = "index.md" },
 
   { "Architecture" = [
-    { "System Overview" = "architecture/00-system-overview.md" },
+    { "General Overview" = "architecture/00-general-overview.md" },
     { "K3s Cluster Design" = "architecture/01-k3s-cluster-design.md" },
     { "Core Networking" = "architecture/02-core-networking.md" },
     { "Storage & Persistence" = "architecture/03-storage-persistence.md" },
