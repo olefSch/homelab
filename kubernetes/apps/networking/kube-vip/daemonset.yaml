@@ -57,7 +57,12 @@ spec:
             - name: svc_election
               value: 'true'
           securityContext:
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault # INFO: might be bid risky - lets see if it to hard:p
             capabilities:
+              drop:
+                - ALL
               add:
                 - NET_ADMIN
                 - NET_RAW
