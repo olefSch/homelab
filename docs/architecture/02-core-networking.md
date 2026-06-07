@@ -34,9 +34,10 @@ the Kubernetes API. It is managed strictly by the underlying node provisioning s
 access even if the GitOps engine fails.
 
 **The Data Plane Pool (`192.168.0.25 - 192.168.0.29`):** This pool provides IP addresses for
-standard web applications. It is managed entirely via the GitOps repository (`homelab`) and strictly
-adheres to the official Kubernetes Cloud Controller Manager (CCM) design by decoupling IP allocation
-from physical routing:
+standard web applications. It is managed via the GitOps repository (`homelab`) (the broadcaster
+DaemonSet reuses the existing `kube-vip` ServiceAccount/RBAC from provisioning) and adheres to the
+official Kubernetes Cloud Controller Manager (CCM) design by decoupling IP allocation from physical
+routing:
 
 - **IP Allocation ([`kube-vip-cloud-provider`][kvc]):** Operating as the cluster's CCM, this
   lightweight controller watches the Kubernetes API for new `LoadBalancer` services and
