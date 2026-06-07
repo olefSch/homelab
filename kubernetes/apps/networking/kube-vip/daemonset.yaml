@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kube-vip-services-ds
+  namespace: kube-system
+  annotations:
+    ignore-check.kube-linter.io/host-network:
+      'kube-vip requires host network to broadcast Layer 2 ARP'
+    ignore-check.kube-linter.io/drop-net-raw-capability:
+      'kube-vip requires NET_RAW to craft custom ARP packets'
+    ignore-check.kube-linter.io/run-as-non-root:
+      'kube-vip must run as root to manipulate host network interfaces'
+    ignore-check.kube-linter.io/non-existent-service-account:
+      'ServiceAccount is created by the provisioning repo, not GitOps -_-'
+    ignore-check.kube-linter.io/no-read-only-root-fs: 'Vendor image default and okay for here'
+    ignore-check.kube-linter.io/no-liveness-probe:
+      'Relies on internal leader election, no standard probes available'
+    ignore-check.kube-linter.io/no-readiness-probe:
+      'Relies on internal leader election, no standard probes available'
+spec:
+  selector:
+    matchLabels:
+      name: kube-vip-services-ds
+  template:
+    metadata:
+      labels:
+        name: kube-vip-services-ds
+    spec:
+      # the goal is to keep this service for now away from the
+      # rpi 3b+ worker node, all the rpi 5 are masters due to ha
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/master
+                    operator: Exists
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
+      containers:
+        - name: kube-vip
+          image: ghcr.io/kube-vip/kube-vip:v1.1.2
+          imagePullPolicy: IfNotPresent
+          args:
+            - manager
+          env:
+            - name: vip_arp
+              value: 'true'
+            - name: vip_interface
+              value: 'eth0'
+            - name: cp_enable
+              value: 'false' # this actually runs from provisioning side -> mapping needed !!
+              # repo is here: https://github.com/olefSch/rpi-k3s-cluster-image-builder
+            - name: svc_enable
+              value: 'true'
+            - name: svc_election
+              value: 'true'
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+                - NET_RAW
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+      hostNetwork: true
+      serviceAccountName: kube-vip
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
+        - effect: NoExecute
+          operator: Exists
