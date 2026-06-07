@@ -38,6 +38,7 @@ nav = [
     { "ADR 001: K3s HA on Bare Metal" = "adrs/001-k3s-ha-bare-metal.md" },
     { "ADR 002: ArgoCD for GitOps" = "adrs/002-argocd-for-gitops.md" },
     { "ADR 003: Zero Touch Provisioning" = "adrs/003-zero-touch-provisioning.md" },
+    { "ADR 004: Load Balancer Selection" = "adrs/004-layer-2-service-load-balancer.md" },
   ] },
 ]
 
