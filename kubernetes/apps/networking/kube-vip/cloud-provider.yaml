@@ -58,6 +58,18 @@ spec:
       labels:
         app: kube-vip-cloud-provider
     spec:
+      # the goal is to keep this service for now away from the
+      # rpi 3b+ worker node, all the rpi 5 are masters due to ha
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/master
+                    operator: Exists
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: Exists
       serviceAccountName: kube-vip-cloud-provider
       containers:
         - name: kube-vip-cloud-provider
